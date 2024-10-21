@@ -119,21 +119,26 @@ const FileUploadPage: React.FC = () => {
       });
 
       if (response.data.deploymentUrl) {
-        setPublishedUrl(response.data.deploymentUrl);
+        const fullDeploymentUrl = `https://${response.data.deploymentUrl}`;
+        setPublishedUrl(fullDeploymentUrl);
         setMessage(
-          `Success! Your resume website is being created at: ${response.data.deploymentUrl}\n\n` +
-          'To complete setup:\n' +
-          response.data.next_steps.steps.join('\n')
+          `Success! Your resume website is being created at: ${fullDeploymentUrl}\n\n` +
+          'It may take a few minutes for your site to be fully deployed.'
         );
       } else {
         setMessage('Failed to get the published URL.');
       }
     } catch (error) {
-      setMessage(`Error publishing resume: ${error instanceof Error ? error.message : String(error)}`);
+      let errorMessage = 'An unexpected error occurred';
+      if (error instanceof Error) {
+        errorMessage = error.message;
+      } else if (typeof error === 'string') {
+        errorMessage = error;
+      }
+      setMessage(`Error publishing resume: ${errorMessage}`);
       console.error('Error publishing resume:', error);
     }
   };
-
   return (
     <div className="container mx-auto p-4">
       <h1 className="text-2xl font-bold mb-4">Upload a Resume</h1>
@@ -258,24 +263,24 @@ const FileUploadPage: React.FC = () => {
 
       {/* Display published URL */}
       {publishedUrl && (
-      <div className="mt-4 p-4 bg-green-50 border border-green-200 rounded">
-        <h3 className="font-semibold text-green-800">Your resume is live!</h3>
-        <p className="mt-2">
-          View your resume at:{' '}
-          <a
-            href={publishedUrl}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="text-blue-500 hover:underline"
-          >
-            {publishedUrl}
-          </a>
-        </p>
-        <p className="mt-2 text-sm text-gray-600">
-          Note: It may take a few minutes for your site to be fully deployed.
-        </p>
-      </div>
-    )}
+        <div className="mt-4 p-4 bg-green-50 border border-green-200 rounded">
+          <h3 className="font-semibold text-green-800">Your resume is live!</h3>
+          <p className="mt-2">
+            View your resume at:{' '}
+            <a
+              href={publishedUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-blue-500 hover:underline"
+            >
+              {publishedUrl}
+            </a>
+          </p>
+          <p className="mt-2 text-sm text-gray-600">
+            Note: It may take a few minutes for your site to be fully deployed.
+          </p>
+        </div>
+      )}
     </div>
   );
 };
